@@ -23,6 +23,13 @@ jobs:
       with:
         images: nilupab/githubactionscicd
 
+    - name: Get the GitHub SHA and short SHA
+      id: vars
+      run: |
+        echo "SHA=${GITHUB_SHA}" >> $GITHUB_ENV
+        echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+        echo "BUILD_NUMBER=${{ github.run_number }}" >> $GITHUB_ENV
+    
     - name: Build and push Docker image
       id: push
       uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
@@ -30,8 +37,8 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
+        tags: ${{ secrets.DOCKER_USERNAME }}/githubactionscicd:${{ env.BUILD_NUMBER }}-${{ env.SHORT_SHA }}
+        
      
     
     
