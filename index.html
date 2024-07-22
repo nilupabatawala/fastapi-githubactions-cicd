@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF8">
+    <title>FastAPI Swagger Interaction</title>
+</head>
+<body>
+    <h1>Interact with FastAPI - NKB</h1>
+
+    <!-- Form for publishing a message -->
+    <input type="text" id="publishMessage" placeholder="Enter message to publish">
+    <button onclick="publishMessage()">Publish</button>
+
+    <!-- Button to consume a message -->
+    <button onclick="consumeMessage()">Consume</button>
+
+    <!-- Area to display results -->
+    <h2>Response:</h2>
+    <pre id="response"></pre>
+
+    <script>
+        async function publishMessage() {
+            const message = document.getElementById('publishMessage').value;
+            const response = await fetch(`/publish?message=${encodeURIComponent(message)}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+
+                
+            });
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+            } else {
+                document.getElementById('response').textContent = 'Failed to publish message';
+                console.error('Failed to publish message:', await response.text());
+            }
+        }
+
+        async function consumeMessage() {
+            const response = await fetch('/consume/');
+            const data = await response.json();
+            document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+        }
+    </script>
+</body>
+</html>
